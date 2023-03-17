@@ -1,7 +1,8 @@
 from os import listdir
 from os.path import isfile, join
 from EM1PythonFunctions import *
-import matplotlib as mpl
+import matplotlib.pyplot as plt
+from numpy import insert
 
 
 def get_variable(file_path, index, chosen_subsection="zerod"):
@@ -20,16 +21,14 @@ def scan_file(file_path, variables, start, end, subsection="zerod"):
     data_matrix = []
     for i in variables:
         a = get_List(start, end, file_path, i, subsection)
-        a.insert(0, i + " " + file_path)
         data_matrix.append(a)
     return data_matrix
 
+def Extract_Data(Data_Array,Array,index):
+    for files in range(len(Array)):
+        Data_Array.append(Array[files][index])
+    return Data_Array
 
-def find_variable(Matrix, value):
-    for file in Matrix:
-        for i in file:
-            if Matrix[file, i] == value:
-                return i
 
 
 mypath = "H:\Desktop\Tokamak Modelling\Settings\\"
@@ -45,22 +44,27 @@ Variable_List = [
     "te0",
     "taue",
     "ne0",
-    "hmode",
+    "pnbi"
 ]  # List the Variables you would like to analyse - DON'T INCLUDE B0 (Needs a differing subsection which breaks this loop)
 data_matrix = []
 for paths in Full_Paths:
-    for variable in Variable_List:
+    Data = scan_file(paths, Variable_List, 44, 104)
+    data_matrix.append(Data)
 
-        Data = scan_file(paths, variable, 44, 104)
+Temp_Data = []
+Taue_Data = []
+ne0_Data = []
+NTtau_data = [Temp_Data,Taue_Data,ne0_Data]
 
-        data_matrix.append(Data)
+for array in NTtau_data:
+    i=0
+    Extract_Data(array,data_matrix,i)
+    i+=1
 
-variable_indexs = []
+NTtau_Calculated = np.zeros((len(Temp_Data),len(Temp_Data[0])))
 
-for variables in Variable_List:
-    variable_indexs.append(find_variable(data_matrix, variables))
+for files in Temp_Data:
+    index = Temp_Data.index(files)
+    for i in range(len(files)):
+        NTtau_Calculated[index][i] = Temp_Data[index][i]*Taue_Data[index][i]*ne0_Data[index][i]
 
-print(variable_indexs)
-
-for i in variable_indexs:
-    assert variable_indexs[i] == Variable_List[i]
