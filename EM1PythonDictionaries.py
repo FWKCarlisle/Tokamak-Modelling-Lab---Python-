@@ -18,8 +18,10 @@ variable_symbols = {
     "sext": r"$S_{\mathrm{external}}$",
     "vp": r"$V_{\mathrm{plasma}}$",
     "W": r"$E_{\mathrm{plasma}}$",
+    "ip": r"$I_{p}",
     "ni0titetaue": r"$n_{i(0)}\frac{T_i}{T_e}\tau_E$",  # This is a custom variable
     "nimtimtaue": r"$n_{i(m)}T_{i(m)}\tau_E$",  # This is a custom variable
+    "nTtau": r"$nTtau", # This is a custom variable
 }
 
 variable_meanings = {
@@ -58,7 +60,7 @@ variable_units = {
     "temps": r"\unit{\second}",
     "pnbi": r"\unit{\watt}",
     "frnbi": "",
-    "ip:": r"$\unit{\ampere}$",
+    "ip": r"$\unit{\ampere}$",
     "betap": "",
     "nbar": r"\unit{\per\metre\squared}",
     "ne0": r"\unit{\per\metre\cubed}",
@@ -72,6 +74,7 @@ variable_units = {
     "W": r"\unit{\joule}",
     "ni0titetaue": r"\unit{\second\per\metre\cubed}",  # This is a custom variable
     "nimtimtaue": r"\unit{\electronvolt\second\per\metre\cubed}",  # This is a custom variable
+    "nTtau": r"\unit{\second\per\metre\cubed}"
 }
 
 parameter_symbols = {

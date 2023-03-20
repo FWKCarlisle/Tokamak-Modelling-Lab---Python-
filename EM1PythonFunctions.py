@@ -12,13 +12,15 @@ from EM1PythonDictionaries import (
 )
 
 
-def get_variable(file_path, variables, chosen_subsection="zerod"):
+def get_variable(file_path,variables,start=44,end=104,chosen_subsection="zerod"):
     full_dataset = scipy.io.loadmat(file_path)
     results = []
     for variable in variables:
+        if variable == "nTtau":
+            continue
         a = full_dataset["post"][chosen_subsection][0][0][variable][0][0]
         a = [float(x[0]) for x in a]
-        results.append([variable, a])
+        results.append([variable, a[start:end]])
     return results
 
 
@@ -33,24 +35,26 @@ def get_average(file_path, start, end, variables, chosen_subsection="zerod"):
         results.append([variable, avg, std])
     return results
 
+def find_max_value(array,variable):
+    array.index(variable)
+
 
 def get_triple_product(file_path, start, end):
     full_dataset = scipy.io.loadmat(file_path)
-    triple_product_variables = ["ni0", "tite", "taue"]
-    results = []
-    for variable in triple_product_variables:
-        a = full_dataset["post"]["zerod"][0][0][variable][0][0]
-        a = [float(x[0]) for x in a]
-        avg = np.mean(a[start:end])
-        std = np.std(a[start:end])
-        results.append([variable, avg, std])
-    triple_product_avg = results[0][1] * results[1][1] * results[2][1]
+    triple_product_variables = ["ni0", "te0", "taue"]
+    triple_product = []
+    avg_results = []
+    results = get_variable(file_path,triple_product_variables)
+    avg_results = get_average(file_path,start,end,triple_product_variables)
+    for i in range(len(results[0][1])):
+        triple_product.append(results[0][1][i] * results[1][1][i] * results[2][1][i])
+    triple_product_avg = avg_results[0][1] * avg_results[1][1] * avg_results[2][1]
     triple_product_std = triple_product_avg * np.sqrt(
-        (results[0][2] / results[0][1]) ** 2
-        + (results[1][2] / results[1][1]) ** 2
-        + (results[2][2] / results[2][1]) ** 2
+        (avg_results[0][2] / avg_results[0][1]) ** 2
+        + (avg_results[1][2] / avg_results[1][1]) ** 2
+        + (avg_results[2][2] / avg_results[2][1]) ** 2
     )
-    return ["triple_product", triple_product_avg, triple_product_std]
+    return ["triple_product",triple_product, triple_product_avg, triple_product_std]
 
 
 def get_new_triple_product(file_path, start, end):
@@ -90,33 +94,48 @@ def plot_variable(
     last_file_values,
     variables,
     axs,
+    start = 44,
+    end = 104,
     row_header_yesno=True,
+    nTtau_yesno=True
+    save_graph=True # TODO Sort of save graph
 ):
     row_headers = []
     for i, file_path in enumerate(files_paths):
         for j, variable in enumerate(variables):
             ax = axs[i, j]
-            if variable_units[variable] != "":
-                if i == 0:
-                    ax.set_title(
-                        f"{variable_meanings[variable]} against {variable_meanings['temps']}"
-                    )
-
-                ax.set_ylabel(
-                    f"{variable_symbols[variable]} ({variable_units[variable]})"
-                )
-            else:
-                if i == 0:
-                    ax.set_title(
-                        f"{variable_meanings[variable]} against {variable_meanings['temps']}"
-                    )
-                ax.set_ylabel(f"{variable_symbols[variable]}")
-            time_results = get_variable(file_path, ["temps"])
+            
+            time_results = get_variable(file_path,["temps"])
             times = time_results[0][1]
-            results = get_variable(file_path, variables)
-            variable, ydata = results[j]
-            ax.plot(times, ydata, ".", color="black")
-            ax.set_xlabel(f'{variable_symbols["temps"]} ({variable_units["temps"]})')
+            if variable == "nTtau":
+                results = get_triple_product(file_path,start,end)
+                variable, ydata = "nTtau", results[1] 
+
+                ax.plot(times, ydata, ".", color="black")
+                ax.set_xlabel(f'{variable_symbols["temps"]} ({variable_units["temps"]})')
+            else:
+                if variable_units[variable] != "":
+                    if i == 0:
+                        ax.set_title(
+                            f"{variable_meanings[variable]} against {variable_meanings['temps']}"
+                        )
+
+                    ax.set_ylabel(
+                        f"{variable_symbols[variable]} ({variable_units[variable]})"
+                    )
+                else:
+                    if i == 0:
+                        ax.set_title(
+                            f"{variable_meanings[variable]} against {variable_meanings['temps']}"
+                        )
+                    ax.set_ylabel(f"{variable_symbols[variable]}")
+                if nTtau_yesno:
+                    results = get_variable(file_path,variables[0:-1])
+                else:
+                    results = get_variable(file_path,variables)
+                variable, ydata = results[j]
+                ax.plot(times, ydata, ".", color="black")
+                ax.set_xlabel(f'{variable_symbols["temps"]} ({variable_units["temps"]})')
         if row_header_yesno:
             row_headers.append(f"{first_file_values[i]}MW to {last_file_values[i]}MW")
     return row_headers
