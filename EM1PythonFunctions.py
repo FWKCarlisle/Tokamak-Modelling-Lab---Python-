@@ -35,11 +35,33 @@ def get_average(file_path, start, end, variables, chosen_subsection="zerod"):
         results.append([variable, avg, std])
     return results
 
-def find_max_value(array,variable):
-    array.index(variable)
+def find_max_value(array,variables,width=2):
+    max_array = []
+
+    for var in variables:
+        list = [x for x in array if x[0] == var]
+        list = list[0]
+        values = list[1]
+        max_idx = values.index(max(values))
+        # print(var, values[max_idx])
+        if max_idx >= (len(values)-2) or max_idx <= 2:
+            print(var, "is near boundary")
+        if max_idx >= (len(values)-width):
+            max_array.append([var, values[max_idx-width:max_idx+1]])
+        elif max_idx <= 2:
+            max_array.append([var, values[max_idx:max_idx+(width+1)]])
+            
+        else:
+            max_array.append([var, values[max_idx-width:max_idx+(width+1)]])
+        
+        print("The Max index of", var ,"is", max_idx)
+    return max_array
+        
 
 
-def get_triple_product(file_path, start, end):
+
+
+def get_triple_product(file_path, start, end, average=False):
     full_dataset = scipy.io.loadmat(file_path)
     triple_product_variables = ["ni0", "te0", "taue"]
     triple_product = []
@@ -54,7 +76,11 @@ def get_triple_product(file_path, start, end):
         + (avg_results[1][2] / avg_results[1][1]) ** 2
         + (avg_results[2][2] / avg_results[2][1]) ** 2
     )
-    return ["triple_product",triple_product, triple_product_avg, triple_product_std]
+    if average:
+        return ["nTtau",triple_product, triple_product_avg, triple_product_std]
+    else:
+        return ["nTtau", triple_product]
+    
 
 
 def get_new_triple_product(file_path, start, end):
@@ -97,7 +123,7 @@ def plot_variable(
     start = 44,
     end = 104,
     row_header_yesno=True,
-    nTtau_yesno=True
+    nTtau_yesno=True ,
     save_graph=True # TODO Sort of save graph
 ):
     row_headers = []

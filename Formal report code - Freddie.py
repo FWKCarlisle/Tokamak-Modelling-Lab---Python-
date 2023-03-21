@@ -42,24 +42,26 @@ files_paths = []
 for i in datapoints:
     files_paths.append(mypath + i)
 nrows = len(files_paths)
+ncols = len(variables)
+
 if Triple_product:
     variables.append("nTtau")
+    ncols = len(variables) - 1
 
-    Graphing_variables = variables
-    Graphing_variables.remove("nTtau")
-
-ncols = len(Graphing_variables)
 
 data_matrix = []
 nTtau_Matrix = []
+
+max_value_matrix = []
+
 if FindMax:
-    for files in files_paths:
-        data_matrix.append(get_variable(files,variables))
+    for i, files in enumerate(files_paths):
+        data_matrix = (get_variable(files,variables))
+        data_matrix.append(get_triple_product(files,44,104))
+        print(variables)
+        max_value_matrix.append(find_max_value(data_matrix,variables))
 
-
-    for variable in variables:
-        data_matrix.index()
-
+print(max_value_matrix)
 
 fig, axs = plt.subplots(nrows, ncols, figsize=(15, 5 * nrows), constrained_layout=True)
 for i, file_path in enumerate(files_paths):
@@ -73,4 +75,4 @@ for i, file_path in enumerate(files_paths):
         ax.set_xlabel(f'{variable_symbols[variable]} ({variable_units[variable]})')
         ax.set_ylabel(f'{variable_symbols["nTtau"]}')
         ax.plot(xdata[j][1], ydata[1], ".", color="black")
-plt.show()
+# plt.show()
