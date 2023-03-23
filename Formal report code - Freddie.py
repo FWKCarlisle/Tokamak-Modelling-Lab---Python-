@@ -20,9 +20,16 @@ from EM1PythonDictionaries import (
     parameter_units,
 )
 
+# plt.rcParams["text.usetex"] = True
+# plt.rcParams["text.latex.preamble"] = "\n".join(
+#     [
+#         r"\usepackage{siunitx}",
+#     ]
+# )
+
 
 chosen_subsection = "zerod"
-variables = ["pnbi","ip"] #Always has to have more than two
+variables = ["pnbi","ip","temps","modeh"] #Always has to have more than two #no B0
 # variables = ["taue", "q0", "q95", "qeff"]
 
 start = 44
@@ -30,6 +37,7 @@ end = 104
 save_graph = False
 Triple_product = True
 FindMax = True
+FindMaxFile = True
 if save_graph:
     fig_file = input("Enter the name of the file to save the graph to: ")
 
@@ -48,26 +56,42 @@ if Triple_product:
     variables.append("nTtau")
     ncols = len(variables) - 1
 
+assert variables[-1] == "nTtau" ,"nTtau should be the last variable in the list"
 
-data_matrix = []
-nTtau_Matrix = []
 
-max_value_matrix = []
+
 
 if FindMax:
-    for i, files in enumerate(files_paths):
-        data_matrix = (get_variable(files,variables))
-        data_matrix.append(get_triple_product(files,44,104))
-        print(variables)
-        max_value_matrix.append(find_max_value(data_matrix,variables))
+    data_matrix = []
+    max_value_matrix = []
+    nTtau_values = []
+    max_nTtau = 0
 
+    for i, files in enumerate(files_paths):
+        data_matrix = (get_variable(files,variables,start=start,end=end))
+        data_matrix.append(get_triple_product(files,start,end))
+        max_value_matrix.append(find_max_value(data_matrix,variables))
+    if FindMaxFile:
+        for i in range(len(max_value_matrix)):
+            for j in range(len(max_value_matrix[0])):
+                if max_value_matrix[i][j][0] == "nTtau":
+                    if max_value_matrix[i][j][1] > max_nTtau:
+                        max_nTtau = max_value_matrix[i][j][1]
+                        Max_index = i
+                    nTtau_values.append(max_value_matrix[i][j][1])
+                    
+    
+
+
+
+    print(max_value_matrix[Max_index],files_paths[Max_index])
 
 
 fig, axs = plt.subplots(nrows, ncols, figsize=(15, 5 * nrows), constrained_layout=True)
 for i, file_path in enumerate(files_paths):
-    ydata = get_triple_product(file_path,44,104)
-    xdata = get_variable(file_path,variables)
-    
+    ydata = get_triple_product(file_path,start,end)
+    xdata = get_variable(file_path,variables,start,end)
+      
     for j, variable in enumerate(variables):
         if variable == "nTtau":
             continue
@@ -75,4 +99,5 @@ for i, file_path in enumerate(files_paths):
         ax.set_xlabel(f'{variable_symbols[variable]} ({variable_units[variable]})')
         ax.set_ylabel(f'{variable_symbols["nTtau"]}')
         ax.plot(xdata[j][1], ydata[1], ".", color="black")
+
 plt.show()

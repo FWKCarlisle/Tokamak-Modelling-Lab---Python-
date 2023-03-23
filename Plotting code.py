@@ -22,7 +22,7 @@ from EM1PythonDictionaries import (
 
 
 chosen_subsection = "zerod"
-variables = ["pnbi","ip"] #Always has to have more than two
+variables = ["pnbi","temps","modeh"] #Always has to have more than two
 # variables = ["taue", "q0", "q95", "qeff"]
 
 start = 44
@@ -52,13 +52,13 @@ ncols = len(Graphing_variables)
 
 data_matrix = []
 nTtau_Matrix = []
-if FindMax:
-    for files in files_paths:
-        data_matrix.append(get_variable(files,variables))
+# if FindMax:
+#     for files in files_paths:
+#         data_matrix.append(get_variable(files,variables))
 
 
-    for variable in variables:
-        data_matrix.index()
+#     for variable in variables:
+#         data_matrix.index()
 
 
 fig, axs = plt.subplots(nrows, ncols, figsize=(15, 5 * nrows), constrained_layout=True)

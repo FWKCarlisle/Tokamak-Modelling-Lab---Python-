@@ -42,29 +42,21 @@ def find_index(array, variable):
 
     return list,values
 
+
 def find_max_value(array,variables,width=2):
-    max_array = []
-    Midx_list = []
+    values_array = []
+    max_array = [] #an array showing all the values of variables at max nTtau for the array
+    Midx_list = [] #array showing max index's for all the variables
     for var in variables:
         list, values = find_index(array,var)
         max_idx = values.index(max(values))
-        # print(var, values[max_idx])
-        # if max_idx >= (len(values)-width) or max_idx <= width:
-        #     print(var, "is near boundary")
-        if max_idx >= (len(values)-width):
-            max_array.append([var, values[max_idx-width:max_idx+1]])
-        elif max_idx <= width:
-            max_array.append([var, values[max_idx:max_idx+(width+1)]])
-            
-        else:
-            max_array.append([var, values[max_idx-width:max_idx+(width+1)]])
-        
+        values_array.append(values)
         Midx_list.append(max_idx)
-        # print("The Max index of", var ,"is", max_idx)
-    return max_array,Midx_list
-        
-def find_max_nTtau(array, variables="nTtau"):
-    max_nTtau = 
+    nTtau_idx = Midx_list[-1]
+    for i, var in enumerate(variables):
+        max_array.append([var,values_array[i][nTtau_idx]])
+
+    return max_array
 
 
 
@@ -73,7 +65,7 @@ def get_triple_product(file_path, start, end, average=False):
     triple_product_variables = ["ni0", "te0", "taue"]
     triple_product = []
     avg_results = []
-    results = get_variable(file_path,triple_product_variables)
+    results = get_variable(file_path,triple_product_variables,start,end)
     avg_results = get_average(file_path,start,end,triple_product_variables)
     for i in range(len(results[0][1])):
         triple_product.append(results[0][1][i] * results[1][1][i] * results[2][1][i])
