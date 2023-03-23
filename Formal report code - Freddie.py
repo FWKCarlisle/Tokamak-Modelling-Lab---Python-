@@ -61,7 +61,7 @@ if FindMax:
         print(variables)
         max_value_matrix.append(find_max_value(data_matrix,variables))
 
-print(max_value_matrix)
+
 
 fig, axs = plt.subplots(nrows, ncols, figsize=(15, 5 * nrows), constrained_layout=True)
 for i, file_path in enumerate(files_paths):
@@ -75,4 +75,4 @@ for i, file_path in enumerate(files_paths):
         ax.set_xlabel(f'{variable_symbols[variable]} ({variable_units[variable]})')
         ax.set_ylabel(f'{variable_symbols["nTtau"]}')
         ax.plot(xdata[j][1], ydata[1], ".", color="black")
-# plt.show()
+plt.show()

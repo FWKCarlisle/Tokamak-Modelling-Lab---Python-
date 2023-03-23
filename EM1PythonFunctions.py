@@ -35,29 +35,36 @@ def get_average(file_path, start, end, variables, chosen_subsection="zerod"):
         results.append([variable, avg, std])
     return results
 
+def find_index(array, variable):
+    list = [x for x in array if x[0] == variable]
+    list = list[0]
+    values = list [1]
+
+    return list,values
+
 def find_max_value(array,variables,width=2):
     max_array = []
-
+    Midx_list = []
     for var in variables:
-        list = [x for x in array if x[0] == var]
-        list = list[0]
-        values = list[1]
+        list, values = find_index(array,var)
         max_idx = values.index(max(values))
         # print(var, values[max_idx])
-        if max_idx >= (len(values)-2) or max_idx <= 2:
-            print(var, "is near boundary")
+        # if max_idx >= (len(values)-width) or max_idx <= width:
+        #     print(var, "is near boundary")
         if max_idx >= (len(values)-width):
             max_array.append([var, values[max_idx-width:max_idx+1]])
-        elif max_idx <= 2:
+        elif max_idx <= width:
             max_array.append([var, values[max_idx:max_idx+(width+1)]])
             
         else:
             max_array.append([var, values[max_idx-width:max_idx+(width+1)]])
         
-        print("The Max index of", var ,"is", max_idx)
-    return max_array
+        Midx_list.append(max_idx)
+        # print("The Max index of", var ,"is", max_idx)
+    return max_array,Midx_list
         
-
+def find_max_nTtau(array, variables="nTtau"):
+    max_nTtau = 
 
 
 
