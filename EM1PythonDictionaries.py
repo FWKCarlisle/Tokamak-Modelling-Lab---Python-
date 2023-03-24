@@ -10,6 +10,7 @@ variable_symbols = {
     "frnbi": r"$P_{\mathrm{NBI frac}}$",
     "betap": r"$\beta_{\mathrm{P}}$",
     "ne0": r"$n_{e(0)}$",
+    "nbar": r"$nbar$",
     "ni0": r"$n_{i(0)}$",
     "te0": r"$T_{e(0)}$",
     "tem": r"$\bar{T}_e$",

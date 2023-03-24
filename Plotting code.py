@@ -62,15 +62,7 @@ nTtau_Matrix = []
 
 
 fig, axs = plt.subplots(nrows, ncols, figsize=(15, 5 * nrows), constrained_layout=True)
-for i, file_path in enumerate(files_paths):
-    ydata = get_triple_product(file_path,44,104)
-    xdata = get_variable(file_path,variables)
-    
-    for j, variable in enumerate(variables):
-        if variable == "nTtau":
-            continue
-        ax = axs[i,j]
-        ax.set_xlabel(f'{variable_symbols[variable]} ({variable_units[variable]})')
-        ax.set_ylabel(f'{variable_symbols["nTtau"]}')
-        ax.plot(xdata[j][1], ydata[1], ".", color="black")
+plot_variable(plot_variable(files_paths, variables, axs))
 plt.show()
+
+

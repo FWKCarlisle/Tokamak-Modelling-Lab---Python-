@@ -17,10 +17,13 @@ def get_variable(file_path,variables,start=44,end=104,chosen_subsection="zerod")
     results = []
     for variable in variables:
         if variable == "nTtau":
-            continue
-        a = full_dataset["post"][chosen_subsection][0][0][variable][0][0]
-        a = [float(x[0]) for x in a]
-        results.append([variable, a[start:end]])
+            a = get_triple_product(file_path,start,end)
+        
+            results.append(a)
+        else:
+            a = full_dataset["post"][chosen_subsection][0][0][variable][0][0]
+            a = [float(x[0]) for x in a]
+            results.append([variable, a[start:end]])
     return results
 
 
@@ -68,7 +71,7 @@ def get_triple_product(file_path, start, end, average=False):
     results = get_variable(file_path,triple_product_variables,start,end)
     avg_results = get_average(file_path,start,end,triple_product_variables)
     for i in range(len(results[0][1])):
-        triple_product.append(results[0][1][i] * results[1][1][i] * results[2][1][i])
+        triple_product.append((results[0][1][i]) * results[1][1][i] * results[2][1][i])
     triple_product_avg = avg_results[0][1] * avg_results[1][1] * avg_results[2][1]
     triple_product_std = triple_product_avg * np.sqrt(
         (avg_results[0][2] / avg_results[0][1]) ** 2
@@ -115,13 +118,14 @@ def get_new_triple_product(file_path, start, end):
 
 def plot_variable(
     files_paths,
-    first_file_values,
-    last_file_values,
+    
     variables,
     axs,
     start = 44,
     end = 104,
-    row_header_yesno=True,
+    first_file_values=100,
+    last_file_values=100,
+    row_header_yesno=False,
     nTtau_yesno=True ,
     save_graph=True # TODO Sort of save graph
 ):
@@ -158,6 +162,7 @@ def plot_variable(
                     results = get_variable(file_path,variables[0:-1])
                 else:
                     results = get_variable(file_path,variables)
+                print(results)
                 variable, ydata = results[j]
                 ax.plot(times, ydata, ".", color="black")
                 ax.set_xlabel(f'{variable_symbols["temps"]} ({variable_units["temps"]})')
