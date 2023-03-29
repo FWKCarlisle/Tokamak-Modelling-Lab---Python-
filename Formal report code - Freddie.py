@@ -30,12 +30,12 @@ from EM1PythonDictionaries import (
 
 chosen_subsection = "zerod"
 variables = []  #  #Always has to have more than two #no B0#.
-yaxis_variables = ["modeh","ip","nTtau"] # Y axis variables
+yaxis_variables = ["modeh","pnbi","nTtau"] # Y axis variables
 # variables = []
 
 start = 0
-end = 120
-time_width = 2 #Time width over which take average of nTtau
+end = 150
+time_width = 3 #Time width over which take average of nTtau
 
 
 save_graph = False
@@ -73,7 +73,7 @@ if FindMax:
     max_nTtau = 0
 
     for i, files in enumerate(files_paths):
-        data_matrix = (get_variable(files,variables,start=start,end=end))
+        data_matrix = (get_variable(files,variables))
         # print(data_matrix)
         max_value_matrix.append(find_max_value(data_matrix,variables))
     if FindMaxFile:
@@ -102,7 +102,7 @@ if findTimeAverageForNTtau:
     for i, files in enumerate(files_paths):
         
 
-        data_matrix = get_variable(files,variables,start,end)
+        data_matrix = get_variable(files,variables)
         maxidx = find_max_value(data_matrix,variables,returnIdx=True)
         nTtauinfo = [x for x in maxidx if x[0] == "nTtau"]
         nTtauidx = nTtauinfo[0][1]
@@ -150,8 +150,10 @@ for i, file_path in enumerate(files_paths):
         for y, var in enumerate(yaxis_variables): 
             if var == variable:
                 continue
+            
             ax = axs[i,colomn]
-            ax.set_title(file_path)
+            if y == 1:
+                ax.set_title(file_path)
             ax.set_xlabel(f'{variable_symbols[variable]}')
             ax.set_ylabel(f'{variable_symbols[yaxis_variables[y]]}')
             ax.plot(xdata[j][1], ydata[y][1], ".", color="black")
