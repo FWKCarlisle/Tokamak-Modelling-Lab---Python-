@@ -46,7 +46,7 @@ def find_index(array, variable):
     return list,values
 
 
-def find_max_value(array,variables,width=2):
+def find_max_value(array,variables,width=2,returnIdx=False):
     values_array = []
     max_array = [] #an array showing all the values of variables at max nTtau for the array
     Midx_list = [] #array showing max index's for all the variables
@@ -54,14 +54,13 @@ def find_max_value(array,variables,width=2):
         list, values = find_index(array,var)
         max_idx = values.index(max(values))
         values_array.append(values)
-        Midx_list.append(max_idx)
-    nTtau_idx = Midx_list[-1]
+        Midx_list.append([var,max_idx])
+    nTtau_idx = Midx_list[-1][1]
     for i, var in enumerate(variables):
         max_array.append([var,values_array[i][nTtau_idx]])
-
+    if returnIdx:
+        return Midx_list
     return max_array
-
-
 
 def get_triple_product(file_path, start, end, average=False):
     full_dataset = scipy.io.loadmat(file_path)
