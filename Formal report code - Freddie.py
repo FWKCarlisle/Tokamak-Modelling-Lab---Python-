@@ -29,12 +29,16 @@ from EM1PythonDictionaries import (
 
 
 chosen_subsection = "zerod"
-variables = []  #  #Always has to have more than two #no B0#.
-yaxis_variables = ["modeh","pnbi","nTtau"] # Y axis variables
+variables = ["ip","pnbi"]  #  #Always has to have more than two #no B0#.
+yaxis_variables = ["ip","nTtau","modeh"] # Y axis variables
 # variables = []
 
-start = 0
-end = 150
+calc_start = 44
+calc_end = 114
+
+graph_start = 44
+graph_end = 114
+
 time_width = 3 #Time width over which take average of nTtau
 
 
@@ -43,6 +47,8 @@ Triple_product = True
 FindMax = True
 FindMaxFile = True
 findTimeAverageForNTtau = True
+plotxnTtau = False
+plotxTime = True
 if save_graph:
     fig_file = input("Enter the name of the file to save the graph to: ")
 
@@ -73,7 +79,7 @@ if FindMax:
     max_nTtau = 0
 
     for i, files in enumerate(files_paths):
-        data_matrix = (get_variable(files,variables))
+        data_matrix = (get_variable(files,variables,calc_start,calc_end))
         # print(data_matrix)
         max_value_matrix.append(find_max_value(data_matrix,variables))
     if FindMaxFile:
@@ -91,6 +97,8 @@ if FindMax:
 
     max_from_files = max_value_matrix[Max_file]
     max_nTtau_file = files_paths[Max_file]
+    print(max_value_matrix)
+    print(files_paths)
     print(max_from_files,max_nTtau_file)
     
 if findTimeAverageForNTtau:
@@ -102,7 +110,7 @@ if findTimeAverageForNTtau:
     for i, files in enumerate(files_paths):
         
 
-        data_matrix = get_variable(files,variables)
+        data_matrix = get_variable(files,variables,calc_start,calc_end)
         maxidx = find_max_value(data_matrix,variables,returnIdx=True)
         nTtauinfo = [x for x in maxidx if x[0] == "nTtau"]
         nTtauidx = nTtauinfo[0][1]
@@ -133,6 +141,11 @@ if findTimeAverageForNTtau:
     idx = nTtau_avg_list.index(maxAvgnTtau)
     print("The highest average nTtau is",nTtauAndtimeList[0],"over a time span of",nTtauAndtimeList[1],"seconds",files_paths[idx])
 
+if plotxnTtau == False:
+    variables.remove("nTtau")
+if plotxTime == False:
+    variables.remove("temps")
+
 ncols = (len(variables) * len(yaxis_variables))
 for i, var in enumerate(variables):
     for j, gvar in enumerate(yaxis_variables):
@@ -140,10 +153,10 @@ for i, var in enumerate(variables):
             ncols -= 1
 
 # print(nrows, ncols)
-fig, axs = plt.subplots(nrows, ncols, figsize=(15, 4 * nrows), constrained_layout=True,sharey=False)
+fig, axs = plt.subplots(nrows, ncols, figsize=(15, 4 * nrows), constrained_layout=True,sharex=False,sharey=False)
 for i, file_path in enumerate(files_paths):
-    xdata = get_variable(file_path,variables,start,end)
-    ydata = get_variable(file_path,yaxis_variables,start,end)
+    xdata = get_variable(file_path,variables,graph_start,graph_end)
+    ydata = get_variable(file_path,yaxis_variables,graph_start,graph_end)
     colomn = 0
     
     for j, variable in enumerate(variables):
@@ -152,7 +165,7 @@ for i, file_path in enumerate(files_paths):
                 continue
             
             ax = axs[i,colomn]
-            if y == 1:
+            if len(yaxis_variables)<2 or y == 1:
                 ax.set_title(file_path)
             ax.set_xlabel(f'{variable_symbols[variable]}')
             ax.set_ylabel(f'{variable_symbols[yaxis_variables[y]]}')
