@@ -29,15 +29,16 @@ from EM1PythonDictionaries import (
 
 
 chosen_subsection = "zerod"
-variables = ["ip","pnbi"]  #  #Always has to have more than two #no B0#.
-yaxis_variables = ["ip","nTtau","modeh"] # Y axis variables
+variables = ["pnbi","temps"]  #  #Always has to have more than two #no B0#.
+yaxis_variables = ["nTtau","pnbi","modeh"] # Y axis variables
 # variables = []
 
 calc_start = 44
-calc_end = 114
+calc_end = 104
 
-graph_start = 44
-graph_end = 114
+
+graph_start = 0
+graph_end = 150
 
 time_width = 3 #Time width over which take average of nTtau
 
@@ -46,21 +47,37 @@ save_graph = False
 Triple_product = True
 FindMax = True
 FindMaxFile = True
-findTimeAverageForNTtau = True
-plotxnTtau = False
+findTimeAverageForNTtau = False
+
+plot_data = False
+plot_files = not plot_data
+
 plotxTime = True
+plotxnTtau = True
+
+
+
+if plot_files:
+    plotxTime = False
+    plotxnTtau = False
+    plotnTtauMax = True
+
+
 if save_graph:
     fig_file = input("Enter the name of the file to save the graph to: ")
+
+assert not ((plot_data and plot_files) == True), "You can not plot both data and averages at the same time"
+
 
 mypath = "H:\Desktop\Tokamak Modelling\Settings\\"
 datapoints = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 datapoints.sort()
 
-files_paths = []
+file_paths = []
 
 for i in datapoints:
-    files_paths.append(mypath + i)
-nrows = len(files_paths)
+    file_paths.append(mypath + i)
+nrows = len(file_paths)
 ncols = len(variables)
 
 if Triple_product:
@@ -78,7 +95,7 @@ if FindMax:
     time_lists = []
     max_nTtau = 0
 
-    for i, files in enumerate(files_paths):
+    for i, files in enumerate(file_paths):
         data_matrix = (get_variable(files,variables,calc_start,calc_end))
         # print(data_matrix)
         max_value_matrix.append(find_max_value(data_matrix,variables))
@@ -96,9 +113,9 @@ if FindMax:
 
 
     max_from_files = max_value_matrix[Max_file]
-    max_nTtau_file = files_paths[Max_file]
-    print(max_value_matrix)
-    print(files_paths)
+    max_nTtau_file = file_paths[Max_file]
+    # print(max_value_matrix)
+    # print(file_paths)
     print(max_from_files,max_nTtau_file)
     
 if findTimeAverageForNTtau:
@@ -107,7 +124,7 @@ if findTimeAverageForNTtau:
     nTtau_avg_list = []
     timeDifferenceList = []
     nTtauAndtimeList = []
-    for i, files in enumerate(files_paths):
+    for i, files in enumerate(file_paths):
         
 
         data_matrix = get_variable(files,variables,calc_start,calc_end)
@@ -139,37 +156,109 @@ if findTimeAverageForNTtau:
     nTtauAndtimeList = nTtauAndtimeList[0]
     maxAvgnTtau = max(nTtau_avg_list)
     idx = nTtau_avg_list.index(maxAvgnTtau)
-    print("The highest average nTtau is",nTtauAndtimeList[0],"over a time span of",nTtauAndtimeList[1],"seconds",files_paths[idx])
+    print("The highest average nTtau is",nTtauAndtimeList[0],"over a time span of",nTtauAndtimeList[1],"seconds",file_paths[idx])
 
+    if plotxTime == False:
+        variables.remove("temps")
 if plotxnTtau == False:
     variables.remove("nTtau")
-if plotxTime == False:
-    variables.remove("temps")
 
-ncols = (len(variables) * len(yaxis_variables))
-for i, var in enumerate(variables):
-    for j, gvar in enumerate(yaxis_variables):
-        if var == gvar:
-            ncols -= 1
 
-# print(nrows, ncols)
-fig, axs = plt.subplots(nrows, ncols, figsize=(15, 4 * nrows), constrained_layout=True,sharex=False,sharey=False)
-for i, file_path in enumerate(files_paths):
-    xdata = get_variable(file_path,variables,graph_start,graph_end)
-    ydata = get_variable(file_path,yaxis_variables,graph_start,graph_end)
-    colomn = 0
-    
-    for j, variable in enumerate(variables):
-        for y, var in enumerate(yaxis_variables): 
-            if var == variable:
+
+
+print(nrows, ncols)
+if plot_data:
+    ncols = (len(variables) * len(yaxis_variables))
+    for i, var in enumerate(variables):
+        for j, gvar in enumerate(yaxis_variables):
+            if var == gvar:
+                ncols -= 1
+
+    fig, axs = plt.subplots(nrows, ncols, figsize=(15, 4 * nrows), constrained_layout=True,sharex=False,sharey=False)
+    row = 0
+    print(variables,yaxis_variables)
+    for i, file_path in enumerate(file_paths):
+        xdata = get_variable(file_path,variables,graph_start,graph_end)
+        ydata = get_variable(file_path,yaxis_variables,graph_start,graph_end)
+        colomn = 0    
+        for j, variable in enumerate(variables):
+            for y, var in enumerate(yaxis_variables): 
+                if var == variable:
+                    continue
+                print(file_path,var,variable,row, colomn)
+                ax = axs[row,colomn]
+                if len(yaxis_variables)<2 or y == 1:
+                    ax.set_title(datapoints[i])
+                ax.set_xlabel(f'{variable_symbols[variable]}')
+                ax.set_ylabel(f'{variable_symbols[yaxis_variables[y]]}')
+                ax.plot(xdata[j][1], ydata[y][1], ".", color="black")
+                colomn += 1
+        row += 1       
+
+if plot_files:
+    xdata_matrix = []
+    ydata_matrix = []
+    xdata = []
+    ydata = []
+    if plotnTtauMax:
+        yaxis_variables =["nTtau"]
+        for i, file_path in enumerate(file_paths):
+            xdata_matrix.append([x for x in max_value_matrix[i] if x[0] in variables])
+            ydata_matrix.append([x for x in max_value_matrix[i] if x[0] == "nTtau"])
+        # print(xdata_matrix)
+        # print(ydata_matrix) 
+
+        print(variables)
+        print(yaxis_variables)
+        for k in range(len(xdata_matrix[0])):
+            append = []
+            for i in range(len(file_paths)):
+                
+                append.append(xdata_matrix[i][k][1])
+            xdata.append(append)
+        append = []
+        for i in range(len(file_paths)):
+            append.append(ydata_matrix[i][0][1])
+            ydata.append(append)
+    else:
+        for i, file_path in enumerate(file_paths):
+            xdata_matrix.append(get_average(file_path,graph_start,graph_end,variables))
+            ydata_matrix.append(get_average(file_path,graph_start,graph_end,yaxis_variables))
+
+        for y in range(len(variables)):
+            append = []
+            for i in range(len(file_paths)):
+                append.append(xdata_matrix[i][y][1])
+            xdata.append(append)
+        for y in range(len(yaxis_variables)):
+            append = []
+            for i in range(len(file_paths)):
+                append.append(ydata_matrix[i][y][1])
+            ydata.append(append)
+
+    ncols = len(yaxis_variables)
+    nrows = len(variables)
+    fig, axs = plt.subplots(nrows, ncols, figsize=(15, 4 * nrows), constrained_layout=True,sharex=False,sharey=False)
+
+
+    for j, var in enumerate(variables):
+        colomn = 0
+        for y, yvar in enumerate(yaxis_variables):
+            if var == yvar:
                 continue
-            
-            ax = axs[i,colomn]
+            if ncols and nrows == 1:
+                ax = axs
+            elif ncols == 1:
+                ax = axs[j]
+            else:
+                ax = axs[j,colomn]
             if len(yaxis_variables)<2 or y == 1:
-                ax.set_title(file_path)
-            ax.set_xlabel(f'{variable_symbols[variable]}')
-            ax.set_ylabel(f'{variable_symbols[yaxis_variables[y]]}')
-            ax.plot(xdata[j][1], ydata[y][1], ".", color="black")
-            colomn += 1
+                ax.set_title(var)
+            ax.set_xlabel(f'{variable_symbols[var]}')
+            ax.set_ylabel(f'{variable_symbols[yvar]}')
+
+            ax.plot(xdata[j],ydata[y], ".", color="black")
+            # colomn +=1
+
 
 plt.show()

@@ -31,6 +31,8 @@ def get_average(file_path, start, end, variables, chosen_subsection="zerod"):
     full_dataset = scipy.io.loadmat(file_path)
     results = []
     for variable in variables:
+        if variable == "nTtau":
+            a = get_triple_product(file_path,start,end,average=True)
         a = full_dataset["post"][chosen_subsection][0][0][variable][0][0]
         a = [float(x[0]) for x in a]
         avg = np.mean(a[start:end])
@@ -78,7 +80,7 @@ def get_triple_product(file_path, start, end, average=False):
         + (avg_results[2][2] / avg_results[2][1]) ** 2
     )
     if average:
-        return ["nTtau",triple_product, triple_product_avg, triple_product_std]
+        return ["nTtau",triple_product_avg, triple_product_std]
     else:
         return ["nTtau", triple_product]
     
@@ -168,6 +170,8 @@ def plot_variable(
         if row_header_yesno:
             row_headers.append(f"{first_file_values[i]}MW to {last_file_values[i]}MW")
     return row_headers
+
+        
 
 
 def add_headers(
