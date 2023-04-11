@@ -29,16 +29,16 @@ from EM1PythonDictionaries import (
 
 
 chosen_subsection = "zerod"
-variables = ["pnbi","temps"]  #  #Always has to have more than two #no B0#.
-yaxis_variables = ["nTtau","pnbi","modeh"] # Y axis variables
+variables = ["ip","temps"]  #  #Always has to have more than two #no B0#.
+yaxis_variables = ["nTtau"] # Y axis variables
 # variables = []
 
 calc_start = 44
-calc_end = 104
+calc_end = 108
 
 
-graph_start = 0
-graph_end = 150
+graph_start = 44
+graph_end = 108
 
 time_width = 3 #Time width over which take average of nTtau
 
@@ -49,7 +49,7 @@ FindMax = True
 FindMaxFile = True
 findTimeAverageForNTtau = False
 
-plot_data = False
+plot_data = True
 plot_files = not plot_data
 
 plotxTime = True
@@ -114,9 +114,9 @@ if FindMax:
 
     max_from_files = max_value_matrix[Max_file]
     max_nTtau_file = file_paths[Max_file]
-    # print(max_value_matrix)
-    # print(file_paths)
-    print(max_from_files,max_nTtau_file)
+    for i in range(len(max_value_matrix)):
+        print(max_value_matrix[i],file_paths[i])
+    print("MAXIMUM nTtau & File",max_from_files,max_nTtau_file)
     
 if findTimeAverageForNTtau:
     if "temps" not in variables:
@@ -185,7 +185,6 @@ if plot_data:
             for y, var in enumerate(yaxis_variables): 
                 if var == variable:
                     continue
-                print(file_path,var,variable,row, colomn)
                 ax = axs[row,colomn]
                 if len(yaxis_variables)<2 or y == 1:
                     ax.set_title(datapoints[i])
@@ -254,8 +253,11 @@ if plot_files:
                 ax = axs[j,colomn]
             if len(yaxis_variables)<2 or y == 1:
                 ax.set_title(var)
+            if plotnTtauMax:
+                ax.set_ylabel("nTtau Max")
+            else:
+                ax.set_ylabel(f'{variable_symbols[yvar]}')
             ax.set_xlabel(f'{variable_symbols[var]}')
-            ax.set_ylabel(f'{variable_symbols[yvar]}')
 
             ax.plot(xdata[j],ydata[y], ".", color="black")
             # colomn +=1

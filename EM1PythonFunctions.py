@@ -33,11 +33,13 @@ def get_average(file_path, start, end, variables, chosen_subsection="zerod"):
     for variable in variables:
         if variable == "nTtau":
             a = get_triple_product(file_path,start,end,average=True)
-        a = full_dataset["post"][chosen_subsection][0][0][variable][0][0]
-        a = [float(x[0]) for x in a]
-        avg = np.mean(a[start:end])
-        std = np.std(a[start:end])
-        results.append([variable, avg, std])
+            results.append(a)
+        else:
+            a = full_dataset["post"][chosen_subsection][0][0][variable][0][0]
+            a = [float(x[0]) for x in a]
+            avg = np.mean(a[start:end])
+            std = np.std(a[start:end])
+            results.append([variable, avg, std])
     return results
 
 def find_index(array, variable):

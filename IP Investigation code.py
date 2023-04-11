@@ -180,7 +180,7 @@ y = NTtau_Max_List[0]
 
 MaxVal = NTtau_Max_List[0].index(max(NTtau_Max_List[0]))
 print(MaxVal)
-print(str(Nbar_Max_List[0][MaxVal]) + ", Max NTtau - " + str(NTtau_Max_List[0][MaxVal]))
+print(str(Ip_Max_List[0][MaxVal]) + ", Max NTtau - " + str(NTtau_Max_List[0][MaxVal]),datapoints[MaxVal])
     # y = Ip_List[0]
 
 plt.scatter(x,y)
@@ -204,7 +204,7 @@ plt.scatter(x,y)
 Results = open("H:\Desktop\Results.txt", "w")
 
 writer = csv.writer(Results) 
-Results.write(("Plasma Current" + "," + "Plasma Current Err" + "," + "P(NBI)" + "," + "P(NBI) Err" + "," +"Central Line Density"+"," +"Central Line Density Error"+","+ "NTtau" +"," + "NTtau Err" + "," + "\n"))
+Results.write(("Plasma Current" + "," + "Plasma Current Err" + "," + "P(NBI)" + "," + "P(NBI) Err" + "," +"Central Line Density"+"," +"Central Line Density Error"+"," + "NTtau Maximum" +"," + "NTtau Err" + "," + "\n"))
 # Results.write("Pnbi"+","+"Pnbi err"+","+"NTtau"+","+"NTtau err" +"\n")
 # + "," + "Plasma Current Err"
 PlasmaRow = []
