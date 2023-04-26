@@ -20,6 +20,7 @@ variable_symbols = {
     "vp": r"$V_{\mathrm{plasma}}$",
     "W": r"$E_{\mathrm{plasma}}$",
     "ip": r"$I_{p}",
+    "b0": r"B_0",
     "ni0titetaue": r"$n_{i(0)}\frac{T_i}{T_e}\tau_E$",  # This is a custom variable
     "nimtimtaue": r"$n_{i(m)}T_{i(m)}\tau_E$",  # This is a custom variable
     "nTtau": r"$nTtau", # This is a custom variable

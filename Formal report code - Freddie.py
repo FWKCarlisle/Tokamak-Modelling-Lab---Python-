@@ -29,8 +29,8 @@ from EM1PythonDictionaries import (
 
 
 chosen_subsection = "zerod"
-variables = ["ip","temps"]  #  #Always has to have more than two #no B0#.
-yaxis_variables = ["nTtau"] # Y axis variables
+variables = ["pnbi","temps"]  #  #Always has to have more than two #no B0#.
+yaxis_variables = ["nTtau","modeh"] # Y axis variables
 # variables = []
 
 calc_start = 44
@@ -49,18 +49,18 @@ FindMax = True
 FindMaxFile = True
 findTimeAverageForNTtau = False
 
-plot_data = True
+plot_data = False
 plot_files = not plot_data
 
 plotxTime = True
-plotxnTtau = True
+plotxnTtau = False
 
 
 
 if plot_files:
     plotxTime = False
     plotxnTtau = False
-    plotnTtauMax = True
+    plotnTtauMax = False
 
 
 if save_graph:

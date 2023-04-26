@@ -16,7 +16,11 @@ def get_variable(file_path,variables,start=44,end=104,chosen_subsection="zerod")
     full_dataset = scipy.io.loadmat(file_path)
     results = []
     for variable in variables:
-        if variable == "nTtau":
+        if variable == "b0":
+            a = full_dataset['post']["z0dinput"][0][0]["geo"][0][0]["b0"][0][0]
+            a = [float(x[0]) for x in a]
+            results.append([variable, a[start:end]])
+        elif variable == "nTtau":
             a = get_triple_product(file_path,start,end)
         
             results.append(a)
